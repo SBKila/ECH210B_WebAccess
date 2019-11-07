@@ -1,0 +1,16 @@
+{
+    "CTN":"%ECHCOM%",
+    "AI1":%SD1%,
+    "AI2":%SD2%,
+    "AI3":%SD3%,
+    "AI4":%SD4%,
+    "RL1":"%COMP%",
+    "RL2":"%PUMP%",
+    "RL3":"%VALVE%",
+    "RL4":"%RDZ%",
+    "DI1":"%HP%",
+    "DI2":"%BP%",
+    "DI3":"%FLUX%",
+    "DI4":"%HC%",
+    "DI5":"%OFS%"
+}

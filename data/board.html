@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>ECH monitor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+</head>
+<body>
+    <h2>ECH monitor</h2>
+    <div>Connection to ECH210 %ECHCOM%</div>
+    <div data-role="collapsibleset" data-theme="a" data-inset="true">
+        <div data-role="collapsible">
+            <h2>Sensor input</h2>
+            <ul data-role="listview">
+                <li>SD1<span class="ui-li-count">%SD1%°c</span></li>
+                <li>SD2<span class="ui-li-count">%SD2%°c</span></li>
+                <li>SD3<span class="ui-li-count">%SD3%°c</span></li>
+                <li>SD4<span class="ui-li-count">%SD4%°c</span></li>
+            </ul>
+        </div>
+        <div data-role="collapsible">
+            <h2>Digital output</h2>
+            <ul data-role="listview">
+                <li>Compresor<span class="ui-li-count">%COMP%</span></li>
+                <li>Pump<span class="ui-li-count">%PUMP%</span></li>
+            </ul>
+        </div>
+        <div data-role="collapsible">
+            <h2>Command input</h2>
+            <ul data-role="listview" data-autodividers="true" data-theme="a" data-divider-theme="b">
+            <li>Christopher Adams</li>
+            <li>Culver James</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
