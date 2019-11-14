@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <EEPROM.h>
+
 #ifdef ESP32
 #include <FS.h>
 #include <SPIFFS.h>
@@ -15,27 +15,25 @@
 #include <SPIFFSEditor.h>
 
 #include "config.h"
-#include "settings.h"
+
 #include "webPages.h"
-#include "DataMgr.h"
+#include "modbusRegBank.h"
 
 #define MAGIC 932
-
-#define SETUP_PIN 12
 
 #define STATE_SETUP 0
 #define STATE_RESTART 1
 #define STATE_IDLE 2
+#define STATE_READREGISTER 3
 
 boolean modeSettings = false;
 int state = STATE_IDLE;
 boolean system_configured = false;
 AsyncWebServer m_WiFiServer(80);
 
-settings mySettings;
 
+#include "settingMgr.h"
 #include "echMgr.h"
-
 
 #define DEBUG
 #ifdef DEBUG
@@ -53,70 +51,9 @@ settings mySettings;
 const char *http_username = "admin";
 const char *http_password = "admin";
 
-void loadSettings()
-{
-  EEPROM.begin(sizeof(struct settings));
-  EEPROM.get(0, mySettings);
-  EEPROM.end();
-  DEBUG_PRINT("loaded:");
-  DEBUG_PRINT(mySettings.tag);
-  DEBUG_PRINT(",");
-  DEBUG_PRINT(mySettings.ssid_name);
-  DEBUG_PRINT(",");
-  DEBUG_PRINTLN(mySettings.ssid_key);
-  EEPROM.put(0, mySettings);
-  DEBUG_PRINTLN("Settings loaded");
-}
-void storeSettings()
-{
-  EEPROM.begin(sizeof(struct settings));
-  DEBUG_PRINT("store:");
-  DEBUG_PRINT(mySettings.tag);
-  DEBUG_PRINT(",");
-  DEBUG_PRINT(mySettings.ssid_name);
-  DEBUG_PRINT(",");
-  DEBUG_PRINTLN(mySettings.ssid_key);
-  EEPROM.put(0, mySettings);
-  DEBUG_PRINTLN("Settings stored");
-  EEPROM.end();
-}
 void notFound(AsyncWebServerRequest *request)
 {
   request->send(404, "text/plain", "Not found");
-}
-
-String getRegisterProcessor(const String &var)
-{
-  if (var == "SD1")
-    return (DataMgr::getSD1() != UNDEFINED) ? String(DataMgr::getSD1(), DEC) : "";
-  if (var == "SD2")
-    return (DataMgr::getSD2() != UNDEFINED) ? String(DataMgr::getSD2(), DEC) : "";
-  if (var == "SD3")
-    return (DataMgr::getSD3() != UNDEFINED) ? String(DataMgr::getSD3(), DEC) : "";
-  if (var == "SD4")
-    return (DataMgr::getSD4() != UNDEFINED) ? String(DataMgr::getSD4(), DEC) : "";
-  if (var == "COMP")
-    return (DataMgr::getDigitalOutput() & 0x01) ? "ON" : "OFF";
-  if (var == "PUMP")
-    return (DataMgr::getDigitalOutput() & 0x02) ? "ON" : "OFF";
-  if (var == "VALVE")
-    return (DataMgr::getDigitalOutput() & 0x04) ? "ON" : "OFF";
-  if (var == "RDZ")
-    return (DataMgr::getDigitalOutput() & 0x08) ? "ON" : "OFF";
-
-  if (var == "HP")
-    return (DataMgr::getDigitalInput() & 0x40) ? "ON" : "OFF";
-  if (var == "BP")
-    return (DataMgr::getDigitalInput() & 0x80) ? "ON" : "OFF";
-  if (var == "FLUX")
-    return (DataMgr::getDigitalInput() & 0x08) ? "ON" : "OFF";
-  if (var == "HC")
-    return (DataMgr::getDigitalInput() & 0x10) ? "ON" : "OFF";
-  if (var == "OFS")
-    return (DataMgr::getDigitalInput() & 0x20) ? "ON" : "OFF";
-  if (var == "ECHCOM")
-    return DataMgr::getEchComStatus() ? "OK" : "KO";
-  return String();
 }
 
 void setupRunningMode()
@@ -124,7 +61,7 @@ void setupRunningMode()
   DEBUG_PRINTLN("setupRunningMode");
 
   WiFi.mode(WIFI_STA);
-  WiFi.hostname("echmonitor");
+  WiFi.hostname(mySettings.hostname);
   DEBUG_PRINT("connecting wifi.");
   WiFi.begin(mySettings.ssid_name, mySettings.ssid_key);
   while (WiFi.waitForConnectResult() != WL_CONNECTED)
@@ -138,8 +75,7 @@ void setupRunningMode()
   DEBUG_PRINT("IP address: ");
   DEBUG_PRINTLN(IP);
 
-  MDNS.begin("echmonitor");
-  MDNS.addService("http", "tcp", 80);
+  MDNS.begin(mySettings.hostname);
 
   SPIFFS.begin();
 #ifdef ESP32
@@ -147,35 +83,48 @@ void setupRunningMode()
 #elif defined(ESP8266)
   m_WiFiServer.addHandler(new SPIFFSEditor(http_username, http_password));
 #endif
-  m_WiFiServer.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-    DEBUG_PRINTLN("GET /");
-    request->send(SPIFFS, "/board.html", "text/html; charset=utf-8", false, getRegisterProcessor);
-    DEBUG_PRINTLN("END GET /");
-  });
 
   m_WiFiServer.on("/register", HTTP_GET, [](AsyncWebServerRequest *request) {
     DEBUG_PRINTLN("GET /register");
-    if(request->hasParam("addr")){
-      String value = request->getParam("ssid-name", true)->value();
+    if (request->hasParam("addr"))
+    {
+      String value = request->getParam("addr", false)->value();
       uint16_t regiterContent;
-      if(0==readRegisters(value.toInt(), regiterContent)){
+      uint8_t result = readRegisters(value.toInt(), regiterContent);
+      if (0 == result)
+      {
         request->send(200, "text/plain", String(regiterContent));
-      } else {
-        request->send(404);
       }
-    } else {
-    request->send(SPIFFS, "/data.json", "application/json; charset=utf-8", false, getRegisterProcessor);
+      else
+      {
+        request->send(404, "text/plain", String(result));
+      }
+    }
+    else
+    {
+      request->send(SPIFFS, "/data.json", "application/json; charset=utf-8", false, registerProcessor);
     }
     DEBUG_PRINTLN("END GET /register");
+  });
+
+  m_WiFiServer.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+    DEBUG_PRINTLN("GET /");
+    request->send(SPIFFS, "/board.html", "text/html; charset=utf-8", false, registerProcessor);
+    DEBUG_PRINTLN("END GET /");
   });
 
   m_WiFiServer.onNotFound(notFound);
   m_WiFiServer.begin();
 
+  wifi_station_set_hostname(mySettings.hostname);
+  MDNS.addService("http", "tcp", 80);
+
   setupECH();
 
   DEBUG_PRINTLN("END_setupRunningMode");
 }
+
+
 
 void setupSettingMode()
 {
@@ -183,7 +132,7 @@ void setupSettingMode()
   mySettings.tag = MAGIC;
 
   // setup Access Point for 1 connection
-  boolean result = WiFi.softAP("echmonitor-setup", "password", 8, false, 1);
+  boolean result = WiFi.softAP(mySettings.hostname, "password", 8, false, 1);
   DEBUG_PRINT("Setup AP: ");
   DEBUG_PRINTLN(result);
 
@@ -200,7 +149,7 @@ void setupSettingMode()
   //Route for root / web page
   m_WiFiServer.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
     DEBUG_PRINTLN("GET /");
-    request->send(SPIFFS, "/setup.html");
+    request->send(SPIFFS, "/setup.html", "text/html; charset=utf-8", false, settingsProcessor);
   });
   m_WiFiServer.onNotFound(notFound);
 
@@ -227,10 +176,40 @@ void setupSettingMode()
         DEBUG_PRINTLN(mySettings.ssid_key);
       }
     }
-    DEBUG_PRINTLN("1");
-    // request->send(200, "text/html", setupcompleted_html);
+
+    if (request->hasParam("echModbusId", true))
+    {
+      String value = request->getParam("echModbusId", true)->value();
+      if (value.length() != 0)
+      {
+        mySettings.ech_Modbus_Id = value.toInt();
+        DEBUG_PRINT("ech_Modbus_Id:");
+        DEBUG_PRINTLN(mySettings.ech_Modbus_Id);
+      }
+    }
+
+    if (request->hasParam("echReadPeiod", true))
+    {
+      String value = request->getParam("echReadPeiod", true)->value();
+      if (value.length() != 0)
+      {
+        mySettings.ech_Read_Period = value.toInt();
+        DEBUG_PRINT("ech_Read_Period:");
+        DEBUG_PRINTLN(mySettings.ech_Read_Period);
+      }
+    }
+
+    if (request->hasParam("hostname", true))
+    {
+      String value = request->getParam("hostname", true)->value();
+      if (value.length() != 0)
+      {
+        value.toCharArray(mySettings.hostname, 32);
+        DEBUG_PRINT("hostmane:");
+        DEBUG_PRINTLN(mySettings.hostname);
+      }
+    }
     request->send(SPIFFS, "/setupcompleted.html");
-    DEBUG_PRINTLN("2");
     storeSettings();
     state = STATE_RESTART;
   });
@@ -246,19 +225,22 @@ void setup()
   DEBUG_PRINTLN("setup");
 
   pinMode(SETUP_PIN, INPUT_PULLUP);
+  // reload config
+  loadSettings();
+    
   if (digitalRead(SETUP_PIN) == LOW)
   {
     modeSettings = true;
   }
-  else
+  else if (mySettings.tag != MAGIC)
   {
-    // reload config
-    loadSettings();
-    if (mySettings.tag != MAGIC)
-    {
-      modeSettings = true;
-    }
+    mySettings.ech_Modbus_Id=1;
+    mySettings.ech_Read_Period = 60;
+    String("echmonitor").toCharArray(mySettings.hostname,32);
+    modeSettings = true;
   }
+
+  WiFi.reconnect();
 
   if (modeSettings)
   {
@@ -268,12 +250,12 @@ void setup()
   {
     setupRunningMode();
   }
+
   DEBUG_PRINTLN("ENDsetup");
 }
 
 void loopSettingMode()
 {
-
   if (state == STATE_RESTART)
   {
     DEBUG_PRINTLN("Reset..");
@@ -284,14 +266,6 @@ void loopSettingMode()
 
 void loopRunningMode()
 {
-  switch (state)
-  {
-  case STATE_IDLE:
-    break;
-  case STATE_SETUP:
-    break;
-  }
-
   loopECH();
 }
 
@@ -305,5 +279,4 @@ void loop()
   {
     loopRunningMode();
   }
-  //  delay(10000); // wait for a second
 }
