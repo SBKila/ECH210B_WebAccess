@@ -1,16 +1,53 @@
 {
-    "CTN":"%ECHCOM%",
-    "AI1":%SD1%,
-    "AI2":%SD2%,
-    "AI3":%SD3%,
-    "AI4":%SD4%,
-    "RL1":"%COMP%",
-    "RL2":"%PUMP%",
-    "RL3":"%VALVE%",
-    "RL4":"%RDZ%",
-    "DI1":"%HP%",
-    "DI2":"%BP%",
-    "DI3":"%FLUX%",
-    "DI4":"%HC%",
-    "DI5":"%OFS%"
+    "status": {
+        "CTN": "%COM%",
+        "POWER": "%POWER%",
+        "STATE": "%STATE%"
+    },
+    "inputs": {
+        "AI1": "%SD1%",
+        "AI2": "%SD2%",
+        "AI3": "%SD3%",
+        "AI4": "%SD4%",
+        "DI_COMPRESSOR": "%DI_COMPRESSOR%",
+        "DI_BOILER": "%DI_BOILER%",
+        "DI_PUMP": "%DI_PUMP%",
+        "DI_WARMCOOL": "%DI_WARMCOOL%",
+        "DI_ONOFFSTANDBY": "%DI_ONOFFSTANDBY%"
+    },
+    "outputs": {
+        "RL1": "%DO_COMPRESSOR%",
+        "RL2": "%DO_PUMP%",
+        "RL3": "%DO_REVERSAL%",
+        "RL4": "%DO_BOILER%",
+        "FanSpeed": "%FANSPEED%"
+    },
+    "alarms": {
+        "auto": {
+            "HP": "%ALAU_HP%",
+            "BP": "%ALAU_BP%",
+            "PUMP": "%ALAU_PUMP%",
+            "COILER": "%ALAU_BOILER%",
+            "GAZ": "%ALAU_GAZ%",
+            "CONF": "%ALAU_CONF%",
+            "SENSOR1": "%ALAU_SENSOR1%",
+            "SENSOR2": "%ALAU_SENSOR2%",
+            "SENSOR3": "%ALAU_SENSOR3%",
+            "SENSOR4": "%ALAU_SENSOR4%",
+            "MAXT": "%ALAU_MAXT%"
+        },
+        "manu": {
+            "HP": "%ALMA_HP%",
+            "BP": "%ALMA_BP%",
+            "PUMP": "%ALMA_PUMP%",
+            "COILER": "%ALMA_BOILER%",
+            "GAZ": "%ALMA_GAZ%",
+            "CONF": "%ALMA_CONF%",
+            "SENSOR1": "%ALMA_SENSOR1%",
+            "SENSOR2": "%ALMA_SENSOR2%",
+            "SENSOR3": "%ALMA_SENSOR3%",
+            "SENSOR4": "%ALMA_SENSOR4%",
+            "MAXT": "%ALMA_MAXT%"
+        }
+    }
 }

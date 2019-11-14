@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
     <title>ECH monitor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,31 +8,72 @@
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 </head>
+
 <body>
     <h2>ECH monitor</h2>
-    <div>Connection to ECH210 %ECHCOM%</div>
     <div data-role="collapsibleset" data-theme="a" data-inset="true">
         <div data-role="collapsible">
-            <h2>Sensor input</h2>
+            <h2>Status</h2>
+            <ul data-role="listview">
+                <li>Ech Connection<span class="ui-li-count">%COM%</span></li>
+                <li>Power<span class="ui-li-count">%POWER%</span></li>
+                <li>Mode<span class="ui-li-count">%STATE%</span></li>
+            </ul>
+        </div>
+        <div data-role="collapsible">
+            <h2>Input</h2>
             <ul data-role="listview">
                 <li>SD1<span class="ui-li-count">%SD1%°c</span></li>
                 <li>SD2<span class="ui-li-count">%SD2%°c</span></li>
                 <li>SD3<span class="ui-li-count">%SD3%°c</span></li>
                 <li>SD4<span class="ui-li-count">%SD4%°c</span></li>
+                <li>Compressor<span class="ui-li-count">%DI_COMPRESSOR%</span></li>
+                <li>Pump<span class="ui-li-count">%DI_PUMP%</span></li>
+                <li>Defroz Resistor<span class="ui-li-count">%DI_BOILER%</span></li>
+                <li>Warm/cool<span class="ui-li-count">%DI_WARMCOOL%</span></li>
+                <li>OFS<span class="ui-li-count">%DI_ONOFFSTANDBY%</span></li>
             </ul>
         </div>
         <div data-role="collapsible">
-            <h2>Digital output</h2>
+            <h2>Output</h2>
             <ul data-role="listview">
-                <li>Compresor<span class="ui-li-count">%COMP%</span></li>
-                <li>Pump<span class="ui-li-count">%PUMP%</span></li>
+                <li>Compressor<span class="ui-li-count">%DO_COMPRESSOR%</span></li>
+                <li>Pump<span class="ui-li-count">%DO_PUMP%</span></li>
+                <li>Revers Valve<span class="ui-li-count">%DO_REVERSAL%</span></li>
+                <li>Defroz Resistor<span class="ui-li-count">%DO_BOILER%</span></li>
+                <li>Fan speed<span class="ui-li-count">%FANSPEED%</span></li>
             </ul>
         </div>
         <div data-role="collapsible">
-            <h2>Command input</h2>
-            <ul data-role="listview" data-autodividers="true" data-theme="a" data-divider-theme="b">
-            <li>Christopher Adams</li>
-            <li>Culver James</li>
+            <h2>Alarm auto reset</h2>
+            <ul data-role="listview">
+                <li>HP<span class="ui-li-count">%ALAU_HP%</span></li>
+                <li>BP<span class="ui-li-count">%ALAU_BP%</span></li>
+                <li>PUMP<span class="ui-li-count">%ALAU_PUMP%</span></li>
+                <li>BOILER<span class="ui-li-count">%ALAU_BOILER%</span></li>
+                <li>GAZ<span class="ui-li-count">%ALAU_GAZ%</span></li>
+                <li>CONF<span class="ui-li-count">%ALAU_CONF%</span></li>
+                <li>SENSOR1<span class="ui-li-count">%ALAU_SENSOR1%</span></li>
+                <li>SENSOR2<span class="ui-li-count">%ALAU_SENSOR2%</span></li>
+                <li>SENSOR3<span class="ui-li-count">%ALAU_SENSOR3%</span></li>
+                <li>SENSOR4<span class="ui-li-count">%ALAU_SENSOR4%</span></li>
+                <li>MAX Temp<span class="ui-li-count">%ALAU_MAXT%</span></li>
+            </ul>
+        </div>
+        <div data-role="collapsible">
+            <h2>Alarm manu reset</h2>
+            <ul data-role="listview">
+                <li>HP<span class="ui-li-count">%ALMA_HP%</span></li>
+                <li>BP<span class="ui-li-count">%ALMA_BP%</span></li>
+                <li>PUMP<span class="ui-li-count">%ALMA_PUMP%</span></li>
+                <li>BOILER<span class="ui-li-count">%ALMA_BOILER%</span></li>
+                <li>GAZ<span class="ui-li-count">%ALMA_GAZ%</span></li>
+                <li>CONF<span class="ui-li-count">%ALMA_CONF%</span></li>
+                <li>SENSOR1<span class="ui-li-count">%ALMA_SENSOR1%</span></li>
+                <li>SENSOR2<span class="ui-li-count">%ALMA_SENSOR2%</span></li>
+                <li>SENSOR3<span class="ui-li-count">%ALMA_SENSOR3%</span></li>
+                <li>SENSOR4<span class="ui-li-count">%ALMA_SENSOR4%</span></li>
+                <li>MAX Temp<span class="ui-li-count">%ALMA_MAXT%</span></li>
             </ul>
         </div>
     </div>

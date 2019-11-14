@@ -1,4 +1,4 @@
-#define ECH210BD_ADRESS 0x1
-#define MODBUS_RX_PIN 14
-#define MODBUS_TX_PIN 12
+#define SETUP_PIN 12
+#define MODBUS_RX_PIN 13
+#define MODBUS_TX_PIN 14
 #define MODBUS_BAUDRATE 9600
