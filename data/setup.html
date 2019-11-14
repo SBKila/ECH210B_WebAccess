@@ -1,23 +1,39 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
     <title>ECH monitor Setup</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
+
 <body>
     <h2>ECH monitor Setup</h2>
     <form action="/settings" method="post">
         <p>
             <label for="ssid-name">WiFi name (1 to 32 characters):</label>
-            <input type="text" id="ssid-name" name="ssid-name" required minlength="1" maxlength="32" size="32">
+            <input type="text" id="ssid-name" name="ssid-name" minlength="1" maxlength="32" size="32"
+                value="%SSIDNAME%">
         </p>
         <p>
             <label for="ssid-pwd">WiFi password (0 to 63 characters):</label>
             <input type="text" id="ssid-pwd" name="ssid-pwd" minlength="0" maxlength="63" size="32">
         </p>
         <p>
+            <label for="echModbusId">ECH modbus id:</label>
+            <input type="number" id="echModbusId" name="echModbusId" min="1" max="20" value="%MODBUSID%" defaultValue="1">
+        </p>
+        <p>
+            <label for="echReadPeriod">Data Reading period (second; 0 => only on demand):</label>
+            <input type="number" id="echReadPeriod" name="echReadPeriod" min="0" value="%REFRESHPERIOD%" defaultValue="60">
+        </p>
+        <p>
+            <label for="hostname">hostname (1 to 32 characters):</label>
+            <input type="text" id="hostname" name="hostname" maxlength="32" size="32" value="%HOSTNAME%" defaultValue="echmonitor">
+        </p>
+        <p>
             <input type="submit" value="Submit">
         </p>
     </form>
 </body>
+
 </html>
