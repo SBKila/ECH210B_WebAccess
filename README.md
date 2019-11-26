@@ -22,3 +22,8 @@ You can setup:
 * the Modbus id of your ECH210B module
 * the pulling period of data reading
 * the hostname of the module once connected to your WiFi
+![Setup Page](Screenshot_SetupPage.jpg)
+
+# Usage
+## web ui
+## web api
