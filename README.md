@@ -1,6 +1,23 @@
 # ECH210B_WebAccess
 WebInterface to read ECH210B PAC controler
 
+# Releases
+
+## 0.1
+First release.
+- all readable register could be read,
+- a set of register could be get together
+- data could be read on demand or schedule to get it quicker
+
+# Used library
+* **NtpClientLib** by German Martin version **2.5.1**
+* **DHT sensor library for ESPx** by beegee_tokyo version **1.17.0**
+* **ThingSpeak** by MathWorks Version **1.5.0**
+* **ESP8266** by ESP8266 community version **2.5.2**
+
+# Hardware
+The present source code was validated on a NodeMcu v3 board.
+
 # Installation
 You will have to update config.h file to setup Serial pin and Force setup pin.
 by default 
