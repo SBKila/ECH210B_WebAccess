@@ -31,80 +31,144 @@ This page present in an accordion a set of ECH210B register grouped by themes
 ![Monitor Page](Screenshot_MonitorPage.jpg)
 ## web api
 
-* direct access to ECH210b register
+- Direct access to ECH210b register
 Request
 Http GET http://<Module IP>/register?addr=<register number>
- > http://192.168.1.19/register?addr=1135
- > GET /register?addr=1135 HTTP/1.1
- > Host: 192.168.1.19
- > cache-controle: no-cache
-Response
-> Content-Type: text/plain
-> 240 (register value as text string)
-> 
 
-* Access to ECH210b register
+> http://192.168.1.19/register?addr=1135
+>
+> GET /register?addr=1135 HTTP/1.1
+>
+> Host: 192.168.1.19
+>
+> cache-controle: no-cache
+
+Response
+
+> Content-Type: text/plain
+>
+> 240 (register value as text string) 
+
+- Access to ECH210b registers
 
 Request
 Http GET http://<Module IP>/register
- > http://192.168.1.19/register
- > GET /register HTTP/1.1
- > Host: 192.168.1.19
- > cache-controle: no-cache
+
+> http://192.168.1.19/register
+>
+> GET /register HTTP/1.1
+>
+> Host: 192.168.1.19
+>
+> cache-controle: no-cache
+
 Response
+
 > Content-Type →application/json; charset=utf-8
+>
 >{
+>
 >    status": {
+>
 >        "CTN": "true",
+>
 >        "POWER": "false",
+>
 >        "STATE": "cool"
+>
 >    },
+>
 >    "inputs": {
+>
 >        "AI1": " 24.0",
+>
 >        "AI2": " 29.5",
+>
 >        "AI3": " -0.5",
+>
 >        "AI4": "  6.5",
+>
 >        "DI_COMPRESSOR": "ON",
+>
 >        "DI_BOILER": "ON",
+>
 >        "DI_PUMP": "ON",
+>
 >        "DI_WARMCOOL": "ON",
+>
 >        "DI_ONOFFSTANDBY": "OFF"
+>
 >    },
+>
 >    "outputs": {
+>
 >        "RL1": "OFF",
+>
 >        "RL2": "OFF",
+>
 >        "RL3": "OFF",
+>
 >        "RL4": "OFF",
+>
 >        "FanSpeed": "UNKNOWN"
+>
 >    },
+>
 >    "alarms": {
+>
 >        "auto": {
+>
 >            "HP": "OFF",
+>
 >            "BP": "OFF",
+>
 >            "PUMP": "OFF",
+>
 >            "COILER": "OFF",
+>
 >            "GAZ": "OFF",
+>
 >            "CONF": "OFF",
+>
 >            "SENSOR1": "OFF",
+>
 >            "SENSOR2": "OFF",
+>
 >            "SENSOR3": "OFF",
+>
 >            "SENSOR4": "OFF",
+>
 >            "MAXT": "OFF"
+>
 >        },
+>
 >        "manu": {
+>
 >            "HP": "UNKNOWN",
+>
 >            "BP": "UNKNOWN",
+>
 >            "PUMP": "UNKNOWN",
+>
 >            "COILER": "UNKNOWN",
+>
 >            "GAZ": "UNKNOWN",
+>
 >            "CONF": "UNKNOWN",
+>
 >            "SENSOR1": "UNKNOWN",
+>
 >            "SENSOR2": "UNKNOWN",
+>
 >            "SENSOR3": "UNKNOWN",
+>
 >            "SENSOR4": "UNKNOWN",
+>
 >            "MAXT": "UNKNOWN"
+>
 >        }
+>
 >    }
+>
 >}
 > 
-
