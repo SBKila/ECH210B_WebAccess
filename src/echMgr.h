@@ -169,7 +169,7 @@ String registerProcessor(const String &var)
     if (var == "ALAU_MAXT")
         return m_EchRegBank.get(ADDR2_ALARM_AUTO, value) ? ((value & MASK_ALARM_MAXT) ? "ON" : "OFF") : "UNKNOWN";
     if(var ==" FANSPEED")
-        return m_EchRegBank.get(ADDR_FANSPEED,value)?dtostrf(((float)(value)), 5, 0, tempBuffer) : "";
+        return m_EchRegBank.get(ADDR_FANSPEED,value)?dtostrf(((float)(value & 0xff)), 5, 0, tempBuffer) : "";
 
 
     return "UNKNOWN";

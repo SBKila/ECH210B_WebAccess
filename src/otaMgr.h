@@ -20,7 +20,7 @@
 bool isOTAUpdate = false;
 
 void setupOTAUpdate() {
-  DEBUG_OTA_PRINT("setupOTAUpdate");
+  DEBUG_OTA_PRINTLN("setupOTAUpdate");
 
   // Port defaults to 8266
   // ArduinoOTA.setPort(8266);
@@ -29,7 +29,7 @@ void setupOTAUpdate() {
   ArduinoOTA.setHostname(mySettings.hostname);
 
   // No authentication by default
-  //ArduinoOTA.setPasswordHash(OTAPASSWORD);
+  ArduinoOTA.setPasswordHash(OTAPASSWORD);
 
 
   ArduinoOTA.onStart([]() {
