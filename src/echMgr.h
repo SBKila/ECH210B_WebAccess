@@ -77,14 +77,17 @@
 ECH210BModbusMaster232 eCH210BModbus;
 modbusRegBank m_EchRegBank;
 boolean performECHAnalyse = false;
+size_t numberOfRegister2Read = 0;
 Ticker echMgrTicker;
 
 uint16_t registers2Read[12] = {ADDR_STATUS, ADDR_DIGITAL_INPUT, ADDR_TP_WATERIN, ADDR_TP_WATEROUT, ADDR_TP_CONDENSOR, ADDR_TP_OUTDOOR, ADDR_FANSPEED, ADDR_DIGITAL_OUTPUT, ADDR1_ALARM_AUTO, ADDR2_ALARM_AUTO, ADDR1_ALARM_MAN, ADDR2_ALARM_MAN};
 //,2048,2049,2051,2052,2053,2054,2081,2082,2083,2084,2085,2086,2087,2089,2090,2091,2092,2094,2095,2,2136,2137,2192,2196,3351,3355};
 
+
 void onECHMgrTicker()
 {
     performECHAnalyse = true;
+    numberOfRegister2Read = sizeof(registers2Read) / sizeof(registers2Read[0]);
 }
 
 String registerProcessor(const String &var)
@@ -199,6 +202,7 @@ uint8_t readRegisters(uint16_t addr, uint16_t &value)
     uint8_t result = eCH210BModbus.readHoldingRegisters(addr, 1);
     if (result != 0)
     {
+        // save ech communication status 
         m_EchRegBank.set(ADDR_ECH,0);
         DEBUG_ECH_PRINT(" ECH Error reading ");
         DEBUG_ECH_PRINTLN(addr);
@@ -206,6 +210,7 @@ uint8_t readRegisters(uint16_t addr, uint16_t &value)
     }
     else
     {
+        // save ech communication status 
         m_EchRegBank.set(ADDR_ECH,1);
         value = eCH210BModbus.getResponseBuffer(0);
         DEBUG_ECH_PRINT(" ECH reading ");
@@ -218,33 +223,31 @@ uint8_t readRegisters(uint16_t addr, uint16_t &value)
     return result;
 }
 
-void read_EchSensors()
+
+void read_EchRegister(int registerIndex)
 {
-    size_t NumberOfElements = sizeof(registers2Read) / sizeof(registers2Read[0]);
-    for (size_t index = 0; index < NumberOfElements; index++)
+    uint16_t value;
+    int result = readRegisters(registers2Read[registerIndex], value);
+    if (result == 0)
     {
-        uint16_t value;
-        int result = readRegisters(registers2Read[index], value);
-        if (result == 0)
-        {
-            m_EchRegBank.set(registers2Read[index], value);
-            DEBUG_ECH_PRINTLN("register saved");
-        }
-        else
-        {
-            m_EchRegBank.remove(registers2Read[index]);
-            DEBUG_ECH_PRINTLN("register removed");
-        }
-        delay(MODBUS_MESSAGE_DELAY);
+        m_EchRegBank.set(registers2Read[registerIndex], value);
+        DEBUG_ECH_PRINTLN("register saved");
     }
+    else
+    {
+        m_EchRegBank.remove(registers2Read[registerIndex]);
+        DEBUG_ECH_PRINTLN("register removed");
+    }
+    delay(MODBUS_MESSAGE_DELAY);
+
 }
 
 void loopECH()
 {
     if (performECHAnalyse)
     {
-        read_EchSensors();
-        performECHAnalyse = false;
+        read_EchRegister(--numberOfRegister2Read);
+        if(0==numberOfRegister2Read) performECHAnalyse = false;
     }
 }
 
