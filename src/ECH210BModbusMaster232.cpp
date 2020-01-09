@@ -202,7 +202,7 @@ uint8_t ECH210BModbusMaster232::ModbusMasterTransaction(uint8_t u8MBFunction)
 {
   uint8_t u8ModbusADU[256];
   uint8_t u8ModbusADUSize = 0;
-  uint8_t i, u8Qty;
+  uint8_t i;
   uint16_t u16CRC;
   uint32_t u32StartTime;
   uint8_t u8BytesLeft = 8;

@@ -29,7 +29,7 @@ void setupOTAUpdate() {
   ArduinoOTA.setHostname(mySettings.hostname);
 
   // No authentication by default
-  ArduinoOTA.setPasswordHash(OTAPASSWORD);
+  //ArduinoOTA.setPasswordHash(OTAPASSWORD);
 
 
   ArduinoOTA.onStart([]() {

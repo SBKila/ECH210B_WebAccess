@@ -1,7 +1,7 @@
 #ifndef ECHMGR_H
 #define ECHMGR_H
 
-#define DEBUG_ECH
+//#define DEBUG_ECH
 #ifdef DEBUG_ECH
 #define DEBUG_ECH_PRINT(x) Serial.print(x)
 #define DEBUG_ECH_PRINTLN(x) Serial.println(x)
