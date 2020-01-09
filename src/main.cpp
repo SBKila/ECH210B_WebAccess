@@ -34,6 +34,7 @@ AsyncWebServer m_WiFiServer(80);
 
 #include "settingMgr.h"
 #include "echMgr.h"
+#include "otaMgr.h"
 
 #define DEBUG
 #ifdef DEBUG
@@ -119,6 +120,7 @@ void setupRunningMode()
   wifi_station_set_hostname(mySettings.hostname);
   MDNS.addService("http", "tcp", 80);
 
+  setupOTAUpdate();
   setupECH();
 
   DEBUG_PRINTLN("END_setupRunningMode");
@@ -266,7 +268,10 @@ void loopSettingMode()
 
 void loopRunningMode()
 {
-  loopECH();
+  if(!isOTAUpdate){
+    loopECH();
+  }
+  loopOTAUpdate();
 }
 
 void loop()
